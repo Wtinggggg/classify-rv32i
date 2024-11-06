@@ -33,13 +33,23 @@ dot:
 
     li t0, 0            
     li t1, 0         
+    li s2, 0
 
 loop_start:
     bge t1, a2, loop_end
     # TODO: Add your own implementation
+    lw s0, 0(a0)
+    lw s1, 0(a1)
+    mul t2, s0, s1          # TODO=========================================
+    addi s2, s2, t2
+
+    addi t1, t1, 1
+    addi a0, a0, 4
+    addi a1, a1, 4
+    j loop_start
 
 loop_end:
-    mv a0, t0
+    mv a0, s2
     jr ra
 
 error_terminate:
