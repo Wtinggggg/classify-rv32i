@@ -29,7 +29,16 @@ relu:
 
 loop_start:
     # TODO: Add your own implementation
+    lw t2, 0(a0)
+    bge t2, zero, x
+    mv, t2, zero
+x:
+    sw t2, 0(a0)
+    addi a0, a0, 4
+    addi a1, a1, -1
+    bnez a1, loop_start
 
+    jr ra
 error:
     li a0, 36          
     j exit          
