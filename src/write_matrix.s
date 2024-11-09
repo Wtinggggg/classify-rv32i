@@ -63,6 +63,16 @@ write_matrix:
 
     # mul s4, s2, s3   # s4 = total elements
     # FIXME: Replace 'mul' with your own implementation
+    #===================================================
+    li s4, 0         # Initialize result to 0
+    mv t0, s2        # Copy number of rows to t0
+loop:
+    beq t0, x0, done
+    add s4, s4, s3   # Add number of columns
+    addi t0, t0, -1  # Decrement counter
+    j loop
+done:
+    #===================================================
 
     # write matrix data to file
     mv a0, s0
