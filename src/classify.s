@@ -167,6 +167,13 @@ classify:
     lw t0, 0(s3)
     lw t1, 0(s8)
     # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+    # =============================================
+    addi sp, sp, -4
+    sw ra, 0(sp)
+    jal ra, f_mul
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    # =============================================
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -205,7 +212,16 @@ classify:
     lw t1, 0(s8)
     # mul a1, t0, t1 # length of h array and set it as second argument
     # FIXME: Replace 'mul' with your own implementation
-    
+    # =============================================
+    addi sp, sp, -8
+    sw ra, 0(sp)
+    sw a0, 4(sp)
+    jal ra, f_mul
+    mv a1, a0
+    lw ra, 0(sp)
+    lw a0, 4(sp)
+    addi sp, sp, 8
+    # =============================================
     jal relu
     
     lw a0, 0(sp)
@@ -227,6 +243,13 @@ classify:
     lw t0, 0(s3)
     lw t1, 0(s6)
     # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+    # =============================================
+    addi sp, sp, -4
+    sw ra, 0(sp)
+    jal ra, f_mul
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    # =============================================
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -286,9 +309,18 @@ classify:
     mv a0, s10 # load o array into first arg
     lw t0, 0(s3)
     lw t1, 0(s6)
-    mul a1, t0, t1 # load length of array into second arg
+    # mul a1, t0, t1 # load length of array into second arg
     # FIXME: Replace 'mul' with your own implementation
-    
+    # =============================================
+    addi sp, sp, -8
+    sw ra, 0(sp)
+    sw a0, 4(sp)
+    jal ra, f_mul
+    mv a1, a0
+    lw ra, 0(sp)
+    lw a0, 4(sp)
+    addi sp, sp, 8
+    # =============================================
     jal argmax
     
     mv t0, a0 # move return value of argmax into t0
@@ -384,3 +416,51 @@ error_args:
 error_malloc:
     li a0, 26
     j exit
+
+
+f_mul:
+    # ===============================================
+    addi sp, sp, -24
+    sw t0, 0(sp)
+    sw t1, 4(sp)
+    sw t2, 8(sp)
+    sw t3, 12(sp)
+    sw t4, 16(sp)
+    sw t5, 20(sp)
+
+    li a0, 0            # Initialize the result to 0
+    beqz t0, done
+    beqz t1, done      # multiplicand or multiplier = 0, return 0
+
+    li t5, 32           # 32bits counter
+    li t4, 0            # mythical bit (bit_-1)
+    
+booth_start:
+    andi t2, t1, 1      # extract bit_0
+    xor t3, t2, t4      # LSB^mythical bit
+    beqz t3, next_loop  # 00 and 11 do nothing
+    
+    beqz t4, sub        # 10 do subtract
+add:                    # 01 do add
+    add a0, a0, t0
+    j next_loop
+sub:
+    sub a0, a0, t0
+    
+next_loop:
+    slli t0, t0, 1
+    andi t4, t1, 1      # extract bit_-1
+    srli t1, t1, 1
+    
+    addi t5, t5, -1 
+    bnez t5, booth_start
+done:
+    lw t0, 0(sp)
+    lw t1, 4(sp)
+    lw t2, 8(sp)
+    lw t3, 12(sp)
+    lw t4, 16(sp)
+    lw t5, 20(sp)
+    addi sp, sp, 24
+    jr ra
+    # ===============================================
