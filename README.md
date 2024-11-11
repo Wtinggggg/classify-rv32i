@@ -139,7 +139,7 @@ done:
 In the `classify.s`, I can only use the RV32i instruction set to implement the mul functionality.
 
 In explaining my approach, I need to first introduce the [Booth's algorithm](https://zh.wikipedia.org/zh-tw/%E5%B8%83%E6%96%AF%E4%B9%98%E6%B3%95%E7%AE%97%E6%B3%95) for signed number multiplication in hardware.
-![image](https://hackmd.io/_uploads/Bygvfyd1z1e.png)
+![image](https://github.com/Wtinggggg/classify-rv32i/blob/main/booth's%20algo%20flow%20chart.png)
 1. Initialization:
     * Set up the multiplicand (M), the multiplier (Q), and an accumulator (A). The multiplier (Q) is appended with an extra bit (Q-1), initially set to 0.
     * Initialize the Accumulator (A) to 0 and determine the number of bits (n) in the multiplier.
