@@ -67,7 +67,7 @@ write_matrix:
     li s4, 0         # Initialize result to 0
     mv t0, s2        # Copy number of rows to t0
 loop:
-    beq t0, x0, done
+    beq t0, zero, done
     add s4, s4, s3   # Add number of columns
     addi t0, t0, -1  # Decrement counter
     j loop
